@@ -1,0 +1,56 @@
+{
+  "adminUsers": {},
+  "boards": {
+    "0": {
+      "title": "General discussion",
+      "active": true,
+      "threads": {
+        "0": true
+      }
+    }
+  },
+  "categories": {
+    "0": {
+      "title": "General",
+      "active": true,
+      "boards": {
+        "0": true
+      }
+    }
+  },
+  "posts": {
+    "0": {
+      "body": "refire-forum has been successfully setup",
+      "createdAt": "1457180850877",
+      "threadId": "0",
+      "user": {
+        "displayName": "Refire Bootstrap",
+        "id": "not-available",
+        "image": ""
+      }
+    }
+  },
+  "settings": {
+    "BOARD_PAGE_SIZE": 10,
+    "DATE_FORMAT": "DD.MM.YYYY",
+    "THREAD_PAGE_LIMIT": 5,
+    "THREAD_PAGE_SIZE": 10
+  },
+  "threads": {
+    "0": {
+      "boardId": "0",
+      "createdAt": "1457180850877",
+      "lastPostAt": "1457180850877",
+      "posts": {
+        "0": true
+      },
+      "title": "Welcome",
+      "user": {
+        "displayName": "Refire Bootstrap",
+        "id": "not-available",
+        "image": ""
+      }
+    }
+  },
+  "users": {}
+}

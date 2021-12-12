@@ -1,0 +1,188 @@
+{
+  "rules": {
+    "adminUsers": {
+      ".read": "auth != null"
+    },
+    "boards": {
+      "$boardId": {
+        "threads": {
+          "$threadId": {
+            ".validate": "newData.isBoolean()",
+            ".write": "((data.val() == null && auth != null) || ((data.val() != null && newData.val() == null) && (auth != null && root.child('adminUsers').child(auth.uid).val() != null)))"
+          }
+        }
+      },
+      ".read": "true",
+      ".indexOn": [
+        "active"
+      ]
+    },
+    "categories": {
+      ".read": "true",
+      ".indexOn": [
+        "active"
+      ]
+    },
+    "posts": {
+      "$postId": {
+        "body": {
+          ".validate": "newData.isString()",
+          ".write": "((auth != null && root.child('adminUsers').child(auth.uid).val() != null) || (auth != null && auth.uid == data.parent().child('user').child('id').val()))"
+        },
+        "edited": {
+          ".validate": "newData.isBoolean()",
+          ".write": "((auth != null && root.child('adminUsers').child(auth.uid).val() != null) || (auth != null && auth.uid == data.parent().child('user').child('id').val()))"
+        },
+        "editedBy": {
+          ".validate": "newData.isString()",
+          ".write": "((auth != null && root.child('adminUsers').child(auth.uid).val() != null) || (auth != null && auth.uid == data.parent().child('user').child('id').val()))"
+        },
+        "editedLast": {
+          ".validate": "(newData.isNumber() && newData.val() <= now)",
+          ".write": "((auth != null && root.child('adminUsers').child(auth.uid).val() != null) || (auth != null && auth.uid == data.parent().child('user').child('id').val()))"
+        },
+        "likes": {
+          "$uid": {
+            ".validate": "newData.isBoolean()",
+            ".write": "(auth != null && auth.uid == $uid)"
+          }
+        },
+        ".validate": "newData.hasChildren()",
+        "createdAt": {
+          ".validate": "(newData.isNumber() && newData.val() <= now)"
+        },
+        "threadId": {
+          ".validate": "newData.isString()"
+        },
+        "replyTo": {
+          ".validate": "root.child('posts').child(newData.val()).val() != null"
+        },
+        "user": {
+          ".validate": "newData.hasChildren()",
+          "displayName": {
+            ".validate": "newData.isString()"
+          },
+          "id": {
+            ".validate": "(auth != null && newData.val() == auth.uid)"
+          },
+          "image": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".write": "(((data.val() == null && auth != null) && root.child('threads').child(newData.child('threadId').val()).child('locked').val() != true) || ((data.val() != null && newData.val() == null) && (auth != null && root.child('adminUsers').child(auth.uid).val() != null)))"
+      },
+      ".read": "true"
+    },
+    "threads": {
+      "$threadId": {
+        "lastPostAt": {
+          ".validate": "(newData.isNumber() && newData.val() <= now)",
+          ".write": "auth != null"
+        },
+        "posts": {
+          "$postId": {
+            ".validate": "newData.isBoolean()",
+            ".write": "(((data.val() == null && auth != null) && root.child('posts').child($postId).val() == null) || ((data.val() != null && newData.val() == null) && (auth != null && root.child('adminUsers').child(auth.uid).val() != null)))"
+          }
+        },
+        ".validate": "newData.hasChildren(['title', 'boardId', 'createdAt', 'lastPostAt', 'user'])",
+        "title": {
+          ".validate": "newData.isString()"
+        },
+        "boardId": {
+          ".validate": "root.child('boards').child(newData.val()).val() != null"
+        },
+        "createdAt": {
+          ".validate": "(newData.isNumber() && newData.val() <= now)"
+        },
+        "locked": {
+          ".validate": "newData.isBoolean()"
+        },
+        "user": {
+          ".validate": "newData.hasChildren()",
+          "displayName": {
+            ".validate": "newData.isString()"
+          },
+          "id": {
+            ".validate": "(auth != null && newData.val() == auth.uid)"
+          },
+          "image": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".write": "(((data.val() == null && auth != null) || ((data.val() != null && newData.val() != null) && (auth != null && root.child('adminUsers').child(auth.uid).val() != null))) || ((data.val() != null && newData.val() == null) && (auth != null && root.child('adminUsers').child(auth.uid).val() != null)))"
+      },
+      ".read": "true"
+    },
+    "users": {
+      "$uid": {
+        "posts": {
+          "$postId": {
+            ".validate": "newData.isBoolean()",
+            ".write": "((data.val() == null && (auth != null && auth.uid == $uid)) || ((data.val() != null && newData.val() == null) && (auth != null && root.child('adminUsers').child(auth.uid).val() != null)))"
+          }
+        },
+        "threadsStarted": {
+          "$threadId": {
+            ".validate": "newData.isBoolean()",
+            ".write": "(data.val() == null && root.child('threads').child($threadId).val() != null)"
+          }
+        },
+        "likes": {
+          "$postId": {
+            ".validate": "newData.isBoolean()",
+            ".write": "((auth != null && auth.uid == $uid) && root.child('posts').child($postId).val() != null)"
+          }
+        },
+        ".validate": "newData.hasChildren(['displayName', 'lastLoginAt', 'profileImageURL', 'provider'])",
+        "displayName": {
+          ".validate": "newData.isString()"
+        },
+        "lastLoginAt": {
+          ".validate": "(newData.isNumber() && newData.val() <= now)"
+        },
+        "profileImageURL": {
+          ".validate": "newData.isString()"
+        },
+        "provider": {
+          ".validate": "newData.isString()"
+        },
+        "registeredAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "settings": {
+          ".validate": "(newData.hasChildren() && newData.hasChildren(['theme']))",
+          "theme": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "true",
+        ".write": "((auth != null && auth.uid == $uid) || (auth != null && root.child('adminUsers').child(auth.uid).val() != null))"
+      }
+    },
+    "settings": {
+      ".read": "true"
+    }
+  }
+}
